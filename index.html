@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Veux-tu être ma Valentine ? 💖</title>
+  < meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      text-align: center;
+    }
+    .card {
+      background: rgba(255,255,255,0.15);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 1em;
+    }
+    textarea {
+      resize: none;
+    }
+    button {
+      background: #ff4d6d;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff2e55;
+    }
+    .link-box {
+      background: white;
+      color: #ff2e55;
+      padding: 10px;
+      border-radius: 10px;
+      word-break: break-all;
+      margin-top: 10px;
+    }
+    .yes {
+      background: #4CAF50;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card" id="app"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get("from");
+  const to = params.get("to");
+  const msg = params.get("msg");
+
+  const app = document.getElementById("app");
+
+  // 💖 PAGE VALENTINE
+  if (from && to && msg) {
+    app.innerHTML = `
+      <h1>${to}, veux-tu être ma Valentine ? 💘</h1>
+      <p><strong>${from}</strong> t’a laissé un message :</p>
+      <p>"${decodeURIComponent(msg)}"</p>
+      <button class="yes" onclick="alert('ELLE A DIT OUI 💖💖💖')">
+        OUI 😍
+      </button>
+    `;
+  } 
+  // 💌 PAGE FORMULAIRE
+  else {
+    app.innerHTML = `
+      <h1>Créer ta demande 💌</h1>
+      <input id="from" placeholder="Ton prénom">
+      <input id="to" placeholder="Prénom de ta Valentine">
+      <textarea id="msg" placeholder="Ton message d'amour 💖"></textarea>
+      <button onclick="generateLink()">Générer le lien 💕</button>
+      <div id="result"></div>
+    `;
+  }
+
+  function generateLink() {
+    const fromVal = document.getElementById("from").value;
+    const toVal = document.getElementById("to").value;
+    const msgVal = encodeURIComponent(document.getElementById("msg").value);
+
+    if (!fromVal || !toVal || !msgVal) {
+      alert("Remplis tous les champs 💔");
+      return;
+    }
+
+    const link = `${window.location.origin}${window.location.pathname}?from=${fromVal}&to=${toVal}&msg=${msgVal}`;
+
+    document.getElementById("result").innerHTML = `
+      <p>Copie et partage ce lien 💖</p>
+      <div class="link-box">${link}</div>
+    `;
+  }
+</script>
+
+</body>
+</html>
