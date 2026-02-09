@@ -1,66 +1,110 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Veux-tu être ma Valentine ? 💖</title>
-  < meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #ff758c, #ff7eb3);
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      text-align: center;
-    }
-    .card {
-      background: rgba(255,255,255,0.15);
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    h1 {
-      font-size: 1.8em;
-      margin-bottom: 10px;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 1em;
-    }
-    textarea {
-      resize: none;
-    }
-    button {
-      background: #ff4d6d;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ff2e55;
-    }
-    .link-box {
-      background: white;
-      color: #ff2e55;
-      padding: 10px;
-      border-radius: 10px;
-      word-break: break-all;
-      margin-top: 10px;
-    }
-    .yes {
-      background: #4CAF50;
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Veux-tu être ma Valentine ? 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    overflow: hidden;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* 💕 Coeurs animés */
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 20px;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.7;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+  }
+
+  .card {
+    background: rgba(255,255,255,0.2);
+    padding: 30px;
+    border-radius: 25px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 10;
+  }
+
+  h1 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin: 10px 0;
+  }
+
+  input, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: none;
+    font-size: 1em;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  button {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .yes {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .no {
+    background: #ff3b3b;
+    color: white;
+    position: relative;
+  }
+
+  .activity {
+    background: white;
+    color: #ff4d6d;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .activity:hover {
+    transform: scale(1.05);
+  }
+
+  .link-box {
+    background: white;
+    color: #ff2e55;
+    padding: 10px;
+    border-radius: 10px;
+    word-break: break-all;
+  }
+</style>
 </head>
 
 <body>
@@ -68,52 +112,97 @@
 <div class="card" id="app"></div>
 
 <script>
+  // 💕 Coeurs décoratifs
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = 4 + Math.random() * 3 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 400);
+
   const params = new URLSearchParams(window.location.search);
   const from = params.get("from");
   const to = params.get("to");
   const msg = params.get("msg");
-
   const app = document.getElementById("app");
 
   // 💖 PAGE VALENTINE
   if (from && to && msg) {
     app.innerHTML = `
-      <h1>${to}, veux-tu être ma Valentine ? 💘</h1>
-      <p><strong>${from}</strong> t’a laissé un message :</p>
-      <p>"${decodeURIComponent(msg)}"</p>
-      <button class="yes" onclick="alert('ELLE A DIT OUI 💖💖💖')">
-        OUI 😍
-      </button>
+      <h1>${escapeHTML(to)}, veux-tu être ma Valentine ? 💘</h1>
+      <p><strong>${escapeHTML(from)}</strong> t’a laissé un message :</p>
+      <p>"${escapeHTML(msg)}"</p>
+
+      <button class="yes" onclick="sayYes()">OUI 😍</button>
+      <button class="no" id="noBtn" onclick="runAway()">NON 🙃</button>
     `;
-  } 
-  // 💌 PAGE FORMULAIRE
+  }
+  // 💌 FORMULAIRE
   else {
     app.innerHTML = `
       <h1>Créer ta demande 💌</h1>
       <input id="from" placeholder="Ton prénom">
       <input id="to" placeholder="Prénom de ta Valentine">
       <textarea id="msg" placeholder="Ton message d'amour 💖"></textarea>
-      <button onclick="generateLink()">Générer le lien 💕</button>
+      <button class="yes" onclick="generateLink()">Générer le lien 💕</button>
       <div id="result"></div>
     `;
   }
 
+  function runAway() {
+    const btn = document.getElementById("noBtn");
+    btn.style.position = "absolute";
+    btn.style.left = Math.random() * 60 + "%";
+    btn.style.top = Math.random() * 60 + "%";
+  }
+
+  function sayYes() {
+    app.innerHTML = `
+      <h1>ELLE A DIT OUI 💖🎉</h1>
+      <p>Alors… qu’est-ce qu’on fait ? 😏</p>
+
+      <div class="activity" onclick="choose('Bowling 🎳')">🎳 Bowling</div>
+      <div class="activity" onclick="choose('Laser Game 🔫')">🔫 Laser Game</div>
+      <div class="activity" onclick="choose('Manger dehors 🍽️')">🍽️ Manger dehors</div>
+      <div class="activity" onclick="choose('The Jump 🤸')">🤸 The Jump</div>
+    `;
+  }
+
+  function choose(activity) {
+    alert("Parfait 😍 On part pour : " + activity);
+  }
+
   function generateLink() {
-    const fromVal = document.getElementById("from").value;
-    const toVal = document.getElementById("to").value;
-    const msgVal = encodeURIComponent(document.getElementById("msg").value);
+    const fromVal = document.getElementById("from").value.trim();
+    const toVal = document.getElementById("to").value.trim();
+    const msgVal = document.getElementById("msg").value.trim();
 
     if (!fromVal || !toVal || !msgVal) {
       alert("Remplis tous les champs 💔");
       return;
     }
 
-    const link = `${window.location.origin}${window.location.pathname}?from=${fromVal}&to=${toVal}&msg=${msgVal}`;
+    const link =
+      `${window.location.origin}${window.location.pathname}` +
+      `?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}&msg=${encodeURIComponent(msgVal)}`;
 
     document.getElementById("result").innerHTML = `
       <p>Copie et partage ce lien 💖</p>
       <div class="link-box">${link}</div>
     `;
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
   }
 </script>
 
